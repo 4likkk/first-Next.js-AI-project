@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function Login() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -12,19 +12,16 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
 
-  useEffect(() => {
-    if (searchParams.get('registered') === 'true') {
-      setRegistered(true);
-      setTimeout(() => setRegistered(false), 3000);
-    }
-  }, [searchParams]);
+  if (searchParams.get('registered') === 'true') {
+    setRegistered(true);
+    setTimeout(() => setRegistered(false), 3000);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     setLoading(true);
-
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -50,61 +47,69 @@ export default function Login() {
   };
 
   return (
-    <div className="authPage">
-      <div className="authContainer">
-        <div className="authLogo">
-          <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="8" fill="#6366F1"/>
-            <path d="M8 16L14 22L24 10" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span>TechVision</span>
+    <div className="authContainer">
+      <div className="authLogo">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="#6366F1"/>
+          <path d="M8 16L14 22L24 10" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span>TechVision</span>
+      </div>
+
+      <h1>Вход</h1>
+      <p className="authSubtitle">Войдите в свой аккаунт</p>
+
+      {registered && (
+        <div className="successMessage">Регистрация прошла успешно! Теперь войдите.</div>
+      )}
+
+      <form className="authForm" onSubmit={handleSubmit}>
+        <div className="formGroup">
+          <label>Email</label>
+          <input
+            type="email"
+            placeholder="example@mail.com"
+            value={formData.email}
+            onChange={(e) => setFormData({...formData, email: e.target.value})}
+            required
+          />
         </div>
 
-        <h1>Вход</h1>
-        <p className="authSubtitle">Войдите в свой аккаунт</p>
+        <div className="formGroup">
+          <label>Пароль</label>
+          <input
+            type="password"
+            placeholder="Введите пароль"
+            value={formData.password}
+            onChange={(e) => setFormData({...formData, password: e.target.value})}
+            required
+          />
+        </div>
 
-        {registered && (
-          <div className="successMessage">Регистрация прошла успешно! Теперь войдите.</div>
-        )}
+        {error && <div className="errorMessage">{error}</div>}
 
-        <form className="authForm" onSubmit={handleSubmit}>
-          <div className="formGroup">
-            <label>Email</label>
-            <input
-              type="email"
-              placeholder="example@mail.com"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              required
-            />
-          </div>
+        <button type="submit" className="btn btnPrimary btnLg btnFull" disabled={loading}>
+          {loading ? 'Вход...' : 'Войти'}
+        </button>
+      </form>
 
-          <div className="formGroup">
-            <label>Пароль</label>
-            <input
-              type="password"
-              placeholder="Введите пароль"
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-              required
-            />
-          </div>
+      <p className="authLink">
+        Нет аккаунта? <Link href="/register">Зарегистрироваться</Link>
+      </p>
 
-          {error && <div className="errorMessage">{error}</div>}
+      <p className="authBack">
+        <Link href="/">← На главную</Link>
+      </p>
+    </div>
+  );
+}
 
-          <button type="submit" className="btn btnPrimary btnLg btnFull" disabled={loading}>
-            {loading ? 'Вход...' : 'Войти'}
-          </button>
-        </form>
-
-        <p className="authLink">
-          Нет аккаунта? <Link href="/register">Зарегистрироваться</Link>
-        </p>
-
-        <p className="authBack">
-          <Link href="/">← На главную</Link>
-        </p>
-      </div>
+export default function Login() {
+  return (
+    <div className="authPage">
+      <Suspense fallback={<div className="authContainer"><p>Загрузка...</p></div>}>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }
