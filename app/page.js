@@ -39,7 +39,7 @@ export default function Home() {
               <rect width="32" height="32" rx="8" fill="#6366F1"/>
               <path d="M8 16L14 22L24 10" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>TechVision2</span>
+            <span>TechVision</span>
           </a>
           <nav className="nav">
             <a href="#services" className="navLink">Услуги</a>
