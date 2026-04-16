@@ -47,7 +47,10 @@ export default function Home() {
             <a href="#about" className="navLink">О нас</a>
             <a href="#contact" className="navLink">Контакты</a>
           </nav>
-          <a href="#contact" className="btn btnPrimary">Обсудить проект</a>
+          <div className="authLinks">
+            <a href="/login" className="btn btnSecondary">Войти</a>
+            <a href="/register" className="btn btnPrimary">Регистрация</a>
+          </div>
         </div>
       </header>
 
